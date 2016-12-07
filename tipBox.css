@@ -1,0 +1,297 @@
+/* ---------------------------------  弹出框 -------------------------------------- */
+.tipsBackground
+{
+    position:absolute;
+    top:0;left:0;
+    height:100%;
+    width:100%;
+    z-index:9998;
+    background-color: rgba(0,0,0,0.65);
+    opacity: 0;
+
+    -webkit-transition:opacity .3s ease;
+    -moz-transition:opacity .3s ease;
+    -ms-transition:opacity .3s ease;
+    -o-transition:opacity .3s ease;
+    transition:opacity .3s ease;
+}
+.tipsBox
+{
+    position:absolute;
+    z-index: 99999;
+    top:0;left:50%;
+    opacity: 0;
+    min-width:250px;
+    min-height:200px;
+    vertical-align:top;
+    overflow:hidden;
+}
+.tipsBox .tipsBox-top
+{
+    width:100%;
+    height:40px;
+    line-height:40px;
+    background-color: #D5D5D5;
+    text-align:center;
+    color:#333;
+    font-weight: 700;
+    border-bottom: 1px solid #999999;
+}
+.tipsBox .tipsBox-top:before
+{
+    content:attr(text);
+}
+.tipsBox .tipsBox-middle{ position:relative; width:100%;  height:100%;padding-top:5px; overflow:hidden; background-color:White; }
+.tipsBox .tipsBox-content
+{
+    position:relative;
+    min-height:120px;
+    word-break:break-all;
+    word-wrap:break-word;
+}
+.tipsBox .tipsBox-bottom
+{
+    height:35px;
+    width:100%;
+    line-height:35px;
+    background-color:#D5D5D5;
+    border-top:none;
+    box-sizing:border-box;
+    text-align:center;
+}
+.tipsBox .tipsBox-bottom a
+{
+    width:50%;
+    display:inline-block;
+    text-align:center;
+    text-decoration:none;
+    height:100%;
+    font-weight:bold;
+    color:#3F3F3F;
+    user-select:none;
+}
+.tipsBox .tipsBox-bottom a:before
+{
+    content:attr(text);
+}
+.tipsBox .tipsBox-bottom a:first-child
+{
+    background-color:#4974FF;
+    color:White;
+}
+.tipsBox .tipsBox-bottom a:last-child
+{
+    background-color:#D5D5D5;
+}
+
+.animated{
+    -webkit-animation-duration: .5s;
+    animation-duration: .5s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-duration: .35s;
+    animation-duration: .35s;
+}
+
+@-webkit-keyframes bounceIn {
+    from, 20%, 40%, 60%, 80%, to {
+        -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    }
+
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.3, .3, .3);
+        transform: scale3d(.3, .3, .3);
+    }
+
+    20% {
+        -webkit-transform: scale3d(1.1, 1.1, 1.1);
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+
+    40% {
+        -webkit-transform: scale3d(.9, .9, .9);
+        transform: scale3d(.9, .9, .9);
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: scale3d(1.03, 1.03, 1.03);
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+
+    80% {
+        -webkit-transform: scale3d(.97, .97, .97);
+        transform: scale3d(.97, .97, .97);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes bounceIn {
+    from, 20%, 40%, 60%, 80%, to {
+        -webkit-animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    }
+
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.3, .3, .3);
+        transform: scale3d(.3, .3, .3);
+    }
+
+    20% {
+        -webkit-transform: scale3d(1.1, 1.1, 1.1);
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+
+    40% {
+        -webkit-transform: scale3d(.9, .9, .9);
+        transform: scale3d(.9, .9, .9);
+    }
+
+    60% {
+        opacity: 1;
+        -webkit-transform: scale3d(1.03, 1.03, 1.03);
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+
+    80% {
+        -webkit-transform: scale3d(.97, .97, .97);
+        transform: scale3d(.97, .97, .97);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: scale3d(1, 1, 1);
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.bounceIn {
+    -webkit-animation-name: bounceIn;
+    animation-name: bounceIn;
+}
+
+/* ---------------------------------  弹出框 -------------------------------------- */
+
+.mask_box,.mask_parent,.trade_mask_box
+{
+    z-index:99;
+    position:absolute;
+    top:0;
+    left:0;
+    background-color: rgba(0,0,0,0.65);
+    height:100%;
+    width:100%;
+    transition: opacity 1s ease 0s;
+    display:none;
+}
+
+.trade_mask_box{ z-index:199;}
+
+
+.loadingIcon
+{
+    position:absolute;
+    top:0px;
+    left:0px;
+    z-index:99999;
+    width:auto;
+    height:auto;
+}
+
+
+/* -----------------------  wait ------------------------ */
+
+.wait
+{
+    position:absolute;
+    width:40px;
+    height:40px;
+    background-image:url('loading.gif');
+    background-repeat:no-repeat;
+    background-position:center center;
+    background-color:transparent;
+    left:50%;
+    top:50%;
+    z-index:999;
+}
+
+/* -----------------------  wait ------------------------ */
+
+
+/* ----------------------- tipsMessage --------------------------- */
+.tips{
+    position: absolute;
+    top: 62px;
+    left: 30%;
+    min-width: 120px;
+    padding: 0 5px;
+    background-color: rgba(0,0,0,0.3);
+    /*opacity: .5;*/
+    z-index: 100;
+    display: none;
+    border-radius: 0.4em;
+}
+.tips .single{
+    line-height: 30px;
+    text-align: center;
+    color:white;
+}
+
+.tipsMessage
+{
+    min-width:190px;
+    position:absolute;
+    left:40%;
+    top:-10%;
+
+    background-image:-webkit-gradient(linear, 0 0, 0 100%,from(#FFFFFF) , color-stop(0.55, #D3D3D3),to(#DCDCDC));
+    background-image:-moz-linear-gradient(top , #FFFFFF, #D3D3D3 55%,#D0D0D0,  #DCDCDC);
+    background-image:-o-linear-gradient(top , #FFFFFF, #D3D3D3 55%,#D0D0D0, #DCDCDC);
+
+    z-index:9999;
+    border-radius: 0.5em;
+    padding: 0 5px;
+    /*  text-align:center; */
+    height:40px;
+    color:Black;
+    opacity:0;
+    line-height:40px;
+
+    -webkit-transition:opacity 1s ease;
+    -moz-transition:opacity 1s ease;
+    -ms-transition:opacity 1s ease;
+    -o-transition:opacity 1s ease;
+    transition:opacity 1s ease;
+
+    font-size:0.85em;
+    vertical-align:top;
+    pointer-events:none;
+}
+.tipsMessage .icon
+{
+    vertical-align:top;
+    display:inline-block;
+    background-image: url("loading.gif");
+    background-position: center center;
+    background-repeat: no-repeat;
+    width:35px;
+    height:100%;    
+}
+.tipsMessage .message
+{
+    vertical-align:top;
+    display:inline-block;
+    height:100%;   
+    margin-left:10px;
+    min-width:150px;
+}
+
+/* ----------------------- tipsMessage --------------------------- */

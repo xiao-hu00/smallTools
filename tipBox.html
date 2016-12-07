@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>tipBox</title>
+	<script type="text/javascript" src="jquery.3.1.0.js"></script>
+	<link rel="stylesheet" type="text/css" href="tipBox.css">
+</head>
+<body>
+	<button id="btn1">可消失提示</button>
+	<button id="btn2">confirm</button>
+	<button id="btn3">alert</button>
+	<button id="btn4">error</button>
+	<button id="btn5">加载</button>
+	<button id="btn6">加载结束</button>
+	<script type="text/javascript">
+		var CommonTools = {
+		    getZero: function (str, prex) {
+		        var zxparams = str.split(".");
+		        var len = prex - (zxparams.length == 2 ? zxparams[1].length : 0);
+		        var res = zxparams[0] + (prex != 0 ? "." : "") + (zxparams.length == 2 ? zxparams[1] : "");
+		        while (len > 0) {
+		            res += "0";
+		            len--;
+		        }
+		        return res;
+		    },
+
+		    format: function (v, x, tox) {
+		        if (v > 1000 && tox)
+		            return this.formatInt(v);
+		        var xx = Math.pow(10, x);
+		        return this.getZero(Math.round(v * xx) / xx + "", x);
+		    },
+
+		    formatInt: function (v, f, des, tox) {
+		        var v = Math.round(v);
+		        if (!f)
+		            return v + "";
+
+		        if (v > 100000000)
+		            return this.format(v / 100000000, des, tox) + "亿";
+		        else if (v > 10000)
+		            return this.format(v / 10000, des, tox) + "万";
+		        else if (v < 1)
+		            return this.format(v, des, tox)
+
+		        return v + "";
+		    },
+		    formatIntofganggu: function (v, f, des, tox) {
+		        var v = Math.round(v);
+		        if (!f)
+		            return v + "";
+
+		        if (v > 100000000)
+		            return this.format(v / 100000000, des, tox) + "亿";
+		        else if (v > 10000)
+		            return this.format(v / 10000, des, tox) + "万";
+		        else if (v < 1)
+		            return this.format(v, des, tox)
+
+		        return v + "";
+		    },
+		    formatIntW: function (v, f, des, tox) {
+		        var v = Math.round(v);
+		        if (!f)
+		            return v + "";
+
+		        if (v > 10000)
+		            return this.format(v / 10000, des, tox) + "万";
+
+		        return v + "";
+
+		    },
+		    formatSum: function (v) {
+		        var tox = false;
+		        v = v * 1;
+		        if (v < 10000) {
+		            return v.toFixed(2);
+		        } else if (v < 1000000) {
+		            return this.format(v / 10000, 2, tox) + "万";
+
+		        } else if (v >= 1000000 && v < 100000000) {
+		            return this.format(v / 10000, 0, tox) + "万";
+
+		        } else if (v >= 100000000 && v < 10000000000) {
+		            return this.format(v / 100000000, 2, tox) + "亿";
+		        } else if (v >= 10000000000) {
+		            return this.format(v / 100000000, 0, tox) + "亿";
+		        }
+		    },
+		    round: function (num, des) {
+		        return (Math.round(num * Math.pow(10, des)) / Math.pow(10, des)).toFixed(des);
+		    },
+		    toFixed: function (num, des) {
+		        if (num == 0) return '--';
+		        return this.round(num * 1, des);
+		    },
+		    toPercentage: function (num, des) {
+		        return this.round(num * 100, des) + "%";
+		    },
+		    toPercentageByHSL: function (num, des) {
+		        if (num == 0) return '--';
+		        return this.round(num * 1, des) + "%";
+		    },
+		    sleep: function (n) { //模拟线程挂起
+		        var start = new Date().getTime();
+		        while (true) if (new Date().getTime() - start > n) break;
+		    },
+		    clear: function (ms) {
+		        $('body').css({ "pointer-events": "none" });
+		        setTimeout(function () { $('body').css({ "pointer-events": "auto" }); }, ms || 500);
+		    },
+		    setCookie: function (name, value) {
+		        var Days = 30;
+		        var exp = new Date();
+		        exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+		        document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+		    },
+		    getCookie: function (name) //读取cookies
+		    {
+		        var arr, reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)');
+		        if (arr = document.cookie.match(reg)) return unescape(arr[2]);
+		        else return null;
+		    },
+		    getOS: function () {
+		        var ua = navigator.userAgent,
+						platform = navigator.platform,
+		                wkmatch = ua.match(/AppleWebKit\/([0-9]+)/),
+						wkversion = !!wkmatch && wkmatch[1],
+						os = null;
+
+		        if (platform.indexOf("iPhone") > -1 || platform.indexOf("iPad") > -1 || platform.indexOf("iPod") > -1) {
+		            os = "ios";
+		        } else if (ua.indexOf("Android") > -1) {
+		            os = "android";
+		        } else {
+		            os = 'other';
+		        }
+		        return os;
+		    },
+		    SystemDebug: function () {
+		        //平台、设备和操作系统
+		        var system = {
+		            win: false,
+		            mac: false,
+		            xll: false
+		        };
+		        //检测平台
+		        var p = navigator.platform.toLowerCase();
+		        system.win = p.indexOf("win") == 0;
+		        system.mac = p.indexOf("mac") == 0;
+		        system.x11 = (p == "x11") || (p.indexOf("linux") == 0);
+
+		        //true为PC false为手机 如果需要测试就直接返回false
+		        return (system.win || system.mac || system.xll);
+		        //return false;
+		    },
+		    onResize: function (fn, key) {
+		        var name = CommonTools.eventName.orientationchange;
+		        key && (name = name + '.' + key);
+		        $(window).off(name).on(name, function () {
+		            //兼容安卓手机change事件不能立即获取到当前高宽
+		            //alert(CommonTools.getOS())
+		            if (CommonTools.getOS() == 'android'){
+		                setTimeout(fn, 300);
+		            } else {
+		                fn();
+		            }
+		        });
+		    },
+		    eventName: {
+		        orientationchange: function () {
+		            if(navigator.userAgent.indexOf("iPhone OS 8") > -1||navigator.userAgent.indexOf("iPhone OS 9") > -1){
+		                return "resize";
+		            }
+		            else{
+		                return ("onorientationchange" in window ? "orientationchange" : "resize");
+		            }
+		        } (),
+		        tap: function () {
+		            return ("ontouchend" in window ? "touchend" : "click");
+		        } (),
+				//2014060602
+		        up:function(){
+		            return ("ontouchstart" in window ? "touchstart" : "mousedown");
+		        }(),
+		        move:function(){
+		            return ("ontouchmove" in window ? "touchmove" : "mousemove");
+		        }()
+		    },
+		    isHide: function ($el) {
+		        return $el.css('display') == 'none' || $el.css('visibility') == 'hidden';
+		    },
+		    type: {
+		        Javascript: 'application/x-javascript',
+		        Css: 'text/css',
+		        Html: 'text/html',
+		        Xml: 'application/xml',
+		        Text: 'text/plain',
+		        Json: 'application/json',
+		        Template: 'text/template'
+		    },
+		    addStyle : function (content, callback) {
+		        if (typeof callback !== "function") { callback = function () { } }
+		        var style = document.createElement("style");
+		        style.type = "text/css";
+		        $(style).html(content).appendTo("head").ready(callback);
+		    },
+		    getParam: function (key, url) {
+		        var i = url.indexOf(key);
+		        if (i == -1) return;
+		        url = url.substr(i + key.length+1, url.length);
+		        i = url.indexOf('&');
+		        if (i == -1) return url;
+		        url = url.substr(0, i);
+		        return url;
+		    },
+		    getSelectText:function(element){
+		        if(element && element.options){
+		             return element.options[element.selectedIndex].innerText
+		        }
+		    },
+		    formatDate: function () {
+		        var m = this.getMonth() + 1;
+		        m = m > 9 ? m : '0' + m;
+		        return [this.getFullYear(), m, this.getDate() > 9 ? this.getDate() : '0' + this.getDate()].join('-')
+		    },
+		    getQueryString:function(name) {//返回URL里面参数的值，name对应参数。没有值则返回null
+		        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		        var r = window.location.search.substr(1).match(reg);
+		        if(r!=null)return  unescape(r[2]); return null;
+		    },
+		    retJSON_out:function(data){
+		        var $this = this
+		            , records = []
+		            , fields = data.shift();
+		        for(var i = 0; i<fields.length;i++){
+		            fields[i] = (fields[i].split(","))[0];
+		        }
+		        _.each(data, function (v, i) {
+		            for(var j = 0;j< v.length;j++ ){
+		                if(v[j] == null || v[j] == "") v[j] = "--";
+		            }
+		            records.push(_.object(fields, v));
+		        });
+		        return records;
+		    }
+		};
+		(function ($) {		
+			var LoadingIcon = {
+			    el: $('div.wait'),
+			    initialize: function () {
+			        if (this.el.length <= 0) { this.el = $('<div class="wait"></div>').appendTo('body'); this.el = $(this.el).get(0); }
+			    },
+			    install: function () {
+			    	this.initialize();
+			        var $this = this;
+			        $(this.el).show().css({ "left": (($('body').width() - $(this.el).width()) / 2) + "px", "top": (($('boy').height() - $(this.el).height()) / 2) + "px" });
+			    },
+			    unstall: function () {
+			        $(this.el).hide();
+			    },
+			    distory: function () { this.el.remove(); },
+			    ishide:function(){
+			        return this.el.css("display") == "none";
+			    }
+			}
+			
+		    var tips = function (opt) {
+	            this.option = $.extend({}, {
+	                //title:标题,content:内容（可以为html）,firstTitile:第一个按钮名字,lastTitle:第二个按钮名字
+	                title: '确认提示', content: '', firstTitile: '取消', lastTitle: '确定',
+	                //第一次按钮被点击的时候触发的事件
+	                OnFirstTap: function () { return true; },
+	                //第二个按钮被点击的时候触发的事件
+	                OnLastTap: function () { return false; },
+	                isShowLast: true
+	            }, opt);
+	            //html
+	            this.html = ['<div class="tipsBackground"><div class="tipsBox animated bounceIn"><div class="tipsBox-top" ></div><div class="boxflex tipsBox-middle"><div style="width:8px"></div><div class="box_flex_1 tipsBox-content"></div><div style="width:8px"></div></div><div class="tipsBox-bottom"><a href="javascript:void(0);" ></a><a href="javascript:void(0);" ></a></div></div></div>'].join('');
+	            this.install = function () {
+	                this.background = function ($this) { return $('.tipsBackground').length > 0 ? $('.tipsBackground') : $($this.html).appendTo('body'); } (this);
+	                this.tipsBox = function ($this) { return $('.tipsBackground .tipsBox'); } (this);
+	                this.content = function ($this) { return $('.tipsBackground .tipsBox .tipsBox-content'); } (this);
+	                this.top = function ($this) { return $('.tipsBackground .tipsBox .tipsBox-top'); } (this);
+	                this.first = function ($this) { return $('.tipsBackground .tipsBox .tipsBox-bottom a').first(); } (this);
+	                this.last = function ($this) { return $('.tipsBackground .tipsBox .tipsBox-bottom a').last(); } (this);
+	                var $this = this;
+	                var evtName = ("onorientationchange" in window) ? 'orientationchange.tipsBox' : 'resize.tipsBox';
+	                $(window).off(evtName).on(evtName, function () {
+	                    setTimeout(function () { $this.resize.call($this); }, 200);
+	                });
+	                this.show();
+	                return this;
+	            };
+	            this.resize = function () {
+
+	                var top = ((this.background.height() - this.tipsBox.height()) / 2) - this.tipsBox.height()*1.2,
+	                    left = ((this.background.width() - this.tipsBox.width()) / 2),
+	                    max_width = 300,
+	                    w = this.background.width() * .9;
+
+	                w = w > max_width ? max_width : w;
+	                left = (this.background.width() - w) / 2;
+	                top = top < 0 ? 0 : top; left = left < 0 ? 0 : left;
+	                (this.background.length > 0) && (function ($this) { $this.tipsBox.css({ "left":left + "px", "top": top + "px", "width": w + "px", "max-height": ($this.background.height() - .9) + "px" }); })(this);
+	                //(this.content.length > 0) && (function ($this) { $this.content.css({}) })(this)
+	                //"left": left + "px",
+	            };
+	            this.show = function (o) {
+	                ($('.tipsBackground').length > 0) && (function ($this) {
+	                    $this.option = $.extend({}, $this.option, o);
+	                    $this.top.attr('text', $this.option.title);
+	                    $this.content.html($this.option.content);
+	                    if($this.content.find(".CanSlide").length){
+	                        this.tipScroll = new iScroll($($this.option.content)[0], {hScrollbar: false,vScrollbar: false});
+	                        this.tipScroll.refresh();
+	                    }
+	                    //2013-07-19 tap修改为 touchend
+	                    var tapName = ("ontouchend" in window ? "touchend" : "click");
+	                     //.hammer()
+	                    $this.first.attr('text', $this.option.firstTitile).off(tapName).on(tapName, function () { $this.option.OnFirstTap.call($this); $this.hide(); });
+	                    $this.last.attr('text', $this.option.lastTitle).off(tapName).on(tapName, function () { $this.option.OnLastTap.call($this); $this.hide(); });
+
+	                    $this.background.off('tap').on('tap', function (ev) { ev.stopPropagation(); });
+	                    if (!$this.option.isShowLast) { $this.last.hide(); $this.first.css("width", "100%"); } else { $this.last.show(); $this.first.css("width", "50%"); }
+	                    $('.tipsBackground,.tipsBackground .tipsBox').show().css({ "opacity": "1" });
+	                    $this.resize();
+	                })(this);
+	            };
+	            this.isShow=function(){ return !CommonTools.isHide(this.background); };
+	            this.hide = function () {(this.background.length > 0) && ($('.tipsBackground,.tipsBackground .tipsBox').hide()); };
+	            this.unstall = function () { (this.background.length > 0) && (function ($this) { $this.option = null; $this.resize = null; $this.background.remove(); })(this); };
+	            return this.install();
+	        };
+
+		    var Prompt = {
+		        tipsBox: null,
+		        tips:[],
+		        nextTip:function(){
+		            if(!this.tips.length) return;
+
+		            var ops=this.tips.shift();
+		            setTimeout($.proxy(function(){
+		                  this.showTip(ops);
+		            },this),400); //这个时间大于动画的时间750ms
+		        },
+		        showTip: function (ops) {
+		            var $this=this;
+		            if(this.tipsBox && this.tipsBox.isShow()){
+		                this.tips.push(ops);
+		                return;
+		            }
+
+		            //
+		            ops.originalOnFirstTap = ops.OnFirstTap;
+		            ops.originalOnLastTap = ops.OnLastTap;
+		            ops.OnFirstTap = function () {
+		                CommonTools.clear();
+		                (ops.originalOnFirstTap) && ops.originalOnFirstTap();
+		                $this.nextTip();
+		            }
+		            ops.OnLastTap = function () {
+		                CommonTools.clear();
+		                (ops.originalOnLastTap) && ops.originalOnLastTap();
+		                $this.nextTip();
+		            }
+
+		            if (!this.tipsBox) {
+		                //this.tipsBox = new tips().show(ops);
+		                this.tipsBox = new tips(ops);
+		            } else {
+		                this.tipsBox.show(ops);
+		            }
+		            return this;
+		        },
+		        confirm: function (ops) {
+		            var options = {
+		                title: "系统确认",
+		                firstTitle: "取消",
+		                lastTitle: "确定",
+		                isShowLast: true
+		            }
+		            for (var key in ops) {
+		                options[key] = ops[key];
+		            }
+		            this.showTip(options);
+		            return this;
+		        },
+		        alert: function (ops) {
+		            var options = {
+		                title: "系统提示",
+		                firstTitile: "确定",
+		                isShowLast: false
+		            }
+		            if (typeof ops == "object") {
+		                for (var key in ops) {
+		                    options[key] = ops[key];
+		                }
+		            } else {
+		                options["content"] = ops;
+		            }
+		            this.showTip(options);
+
+		            CommonTools.sleep(300)
+		            return this;
+		        },
+		        error: function (msg) {
+		            //window.eData=msg;
+		            if (typeof msg == "object") msg = msg.ErrMsg;
+		            var ops = {
+		                title: "错误提示",
+		                content: msg
+		            }
+		            this.alert(ops);
+		            // console.log(msg);
+		            CommonTools.sleep(300)
+		            return this;
+		        }
+		        };
+			var ShortTips = function () {
+		        var $this = this;
+		        $this.tasks = [];
+		        $this.html = '<div class="tips"><div class="single"></div></div>';
+		        $this.$el = $('.tips');
+		        if (!$('boy .tips').length) {
+		            $this.$el = $($this.html).appendTo('body');
+		        }
+		    };
+		    ShortTips.prototype.install = function (text, second) {
+		        var $this = this;
+		        if ($this.isLock) {
+		            $this.tasks.push({text:text,second:second});
+		            return;
+		        }
+		        $this.isLock = true;
+		        $('.single', $this.$el).text(text);
+		        $this.$el.show();
+		        var w = $(window).width()
+		                , h = $(window).height()
+		                , ew = $this.$el.width()
+		                , eh = $this.$el.height();
+		        $this.$el.css({ 'left': (w - ew) / 2, opacity: 1, 'top': ((h - eh) / 2) + 'px' });
+
+		        setTimeout(function () {
+		            $this.$el.animate({ opacity: 0 }, 300, function () {
+		                $this.unstall();
+		            });
+		        }, second || 500);
+		    };
+		    ShortTips.prototype.unstall = function () {
+		        var $this = this;
+		        $this.isLock = false;
+		        $this.$el.hide();
+		        $this.nextTask();
+		    };
+		    ShortTips.prototype.nextTask = function () {
+		        var $this = this;
+		        if($this.tasks.length){
+		            var next = $this.tasks.shift();
+		            this.install(next.text,next.second);
+		        }
+		    };
+
+		    window.ShortTips = new ShortTips;
+
+		    window.Tips=tips;
+		    window.Prompt=Prompt;
+		    window.LoadingIcon = LoadingIcon;
+
+		})(jQuery);
+
+	
+		$('#btn1').on('click',function(){			
+			window.ShortTips.install("成功退出！", 2000);
+		});
+		$('#btn2').on('click',function(){
+			var ops = {
+				title: "系统提示",
+				firstTitle:"取消",
+                lastTitle: "确认",
+                content: "内容",
+                OnFirstTap: function () {
+                    console.log("取消事件");
+                },
+                OnLastTap: function () {
+                    console.log("确认事件");
+                }
+			};
+			window.Prompt.confirm(ops);
+		});
+		$('#btn3').on('click',function(){
+			var ops = {
+				title: "系统提示",
+                content: "内容"
+			};
+			window.Prompt.alert(ops);
+		});
+		$('#btn4').on('click',function(){
+			window.Prompt.error("错误");
+		});
+		$('#btn5').on('click',function(){
+			window.LoadingIcon.install();
+		});
+		$('#btn6').on('click',function(){
+			window.LoadingIcon.unstall();
+		});
+	</script>
+</body>
+</html>
